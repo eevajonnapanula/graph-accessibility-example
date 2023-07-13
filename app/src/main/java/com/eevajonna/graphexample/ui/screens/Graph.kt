@@ -4,6 +4,7 @@ import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,6 +39,8 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
@@ -363,7 +366,12 @@ fun Highlighter(
                     .onGloballyPositioned {
                         position =
                             Pair(it.positionInParent().x, it.positionInParent().x + it.size.width)
-                    },
+                    }
+                    .focusable()
+                    .semantics {
+                        contentDescription =
+                            "${point.year}: Total: ${point.percentageString}, Tech: ${pixelPointsForTech[index].percentageString}, Ict: ${pixelPointsForIct[index].percentageString}"
+                    }
             ) {
             }
         }

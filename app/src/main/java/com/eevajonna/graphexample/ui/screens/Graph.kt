@@ -66,7 +66,7 @@ fun GraphScreen(modifier: Modifier = Modifier) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(Graph.innerPadding),
-        modifier = modifier.verticalScroll(rememberScrollState()).padding(bottom = Graph.innerPadding),
+        modifier = modifier,
     ) {
         val graphColors = GraphColors(
             totalColor = MaterialTheme.colorScheme.primary,
@@ -93,9 +93,7 @@ fun GraphScreen(modifier: Modifier = Modifier) {
         )
 
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = Graph.topPadding),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = Graph.topPadding),
             verticalArrangement = Arrangement.spacedBy(Graph.topPadding),
             horizontalAlignment = Alignment.Start,
         ) {

@@ -1,6 +1,5 @@
 package com.eevajonna.graphexample.ui.screens.utils
 
-import android.util.Log
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
@@ -107,7 +106,7 @@ fun DrawScope.drawYAxis(
                 ),
             )
 
-            val text = AnnotatedString(it.second.toInt().toString())
+            val text = "${AnnotatedString(it.second.toInt().toString())} %"
             val textLayoutResult = textMeasurer.measure(text)
             val textHeight = textLayoutResult.size.height / 2
             val textWidth = textLayoutResult.size.width.toFloat()
@@ -169,7 +168,6 @@ fun DrawScope.drawXAxis(
             highlighterPath.moveTo(it.x + 20f, height)
             highlighterPath.lineTo(it.x + 20f, 0f)
 
-            Log.v("AAA BBB", "Hey?")
             drawPath(
                 highlighterPath,
                 color = highlighterColor,

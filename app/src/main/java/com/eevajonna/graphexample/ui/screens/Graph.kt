@@ -408,7 +408,7 @@ fun Labels(
 fun LabelText(texts: List<String>) {
     Row(
         modifier = Modifier
-            .padding(horizontal = 8.dp)
+            .padding(horizontal = Graph.padding)
             .fillMaxWidth(0.35f),
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {

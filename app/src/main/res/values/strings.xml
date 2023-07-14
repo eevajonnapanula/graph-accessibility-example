@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GraphExample</string>
+    <string name="app_name" translatable="false">GraphExample</string>
     <string name="information_and_communication_technology_ict">Information and Communication Technology (ICT)</string>
     <string name="engineering_degrees_eng">Engineering degrees (Eng.)</string>
     <string name="all_applicants_in_engineering_and_ict">All applicants in engineering and ICT</string>
@@ -7,4 +7,5 @@
     <string name="all">All:</string>
     <string name="eng">Eng.:</string>
     <string name="ict">ICT:</string>
+    <string name="data_source">Datan source: Finnish Education Statistics / Vipunen</string>
 </resources>

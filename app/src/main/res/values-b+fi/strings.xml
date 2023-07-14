@@ -6,4 +6,5 @@
     <string name="all">Kaikki:</string>
     <string name="eng">Tekn.:</string>
     <string name="ict">ICT:</string>
+    <string name="data_source">Datan lähde: Opetushallinnon tilastopalvelu Vipunen</string>
 </resources>

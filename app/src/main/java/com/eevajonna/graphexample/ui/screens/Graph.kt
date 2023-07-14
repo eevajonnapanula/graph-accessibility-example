@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -54,7 +56,7 @@ fun GraphScreen(modifier: Modifier = Modifier) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(Graph.innerPadding),
-        modifier = modifier,
+        modifier = modifier.verticalScroll(rememberScrollState()).padding(bottom = Graph.innerPadding),
     ) {
         val graphColors = GraphColors(
             totalColor = MaterialTheme.colorScheme.primary,
@@ -81,7 +83,9 @@ fun GraphScreen(modifier: Modifier = Modifier) {
         )
 
         Column(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = Graph.topPadding),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = Graph.topPadding),
             verticalArrangement = Arrangement.spacedBy(Graph.topPadding),
             horizontalAlignment = Alignment.Start,
         ) {
@@ -98,6 +102,12 @@ fun GraphScreen(modifier: Modifier = Modifier) {
                 color = graphColors.ictColor,
             )
         }
+
+        Text(
+            text = stringResource(R.string.data_source),
+            modifier = Modifier.padding(horizontal = Graph.topPadding),
+            style = MaterialTheme.typography.labelMedium
+        )
     }
 }
 

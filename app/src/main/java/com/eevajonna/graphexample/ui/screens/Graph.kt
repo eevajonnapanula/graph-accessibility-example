@@ -33,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -313,6 +314,9 @@ fun Graph(
                 pixelPointsForTech = pixelPointsForTech,
                 pixelPointsForIct = pixelPointsForIct,
                 highlightedX = highlightedX,
+                setFocus = { newX ->
+                    highlightedX = newX
+                },
             )
 
             if (highlightedX != null) {
@@ -338,6 +342,7 @@ fun Highlighter(
     pixelPointsForTech: List<Point>,
     pixelPointsForIct: List<Point>,
     highlightedX: Float?,
+    setFocus: (Float) -> Unit,
 ) {
     Box(
         modifier
@@ -351,6 +356,9 @@ fun Highlighter(
             val xOffset = ((index + 1) * widthBetweenPoints - widthBetweenPoints * 0.66f).toInt()
             var isHighlighted by remember { mutableStateOf(false) }
             var position by remember { mutableStateOf(Pair(0f, 0f)) }
+            var color by remember { mutableStateOf(Color.Transparent) }
+
+            val focusedColor = MaterialTheme.colorScheme.onBackground
 
             if (highlightedX == null) isHighlighted = false
 
@@ -370,12 +378,19 @@ fun Highlighter(
                     .offset { IntOffset(xOffset, 0) }
                     .border(
                         width = Graph.Highlighter.width,
-                        color = if (isHighlighted) MaterialTheme.colorScheme.onBackground else Color.Transparent,
+                        color = color,
                         shape = RoundedCornerShape(Graph.Highlighter.borderRadius),
                     )
                     .onGloballyPositioned {
                         position =
                             Pair(it.positionInParent().x, it.positionInParent().x + it.size.width)
+                    }
+                    .onFocusChanged {
+                        color = if (it.isFocused) focusedColor else Color.Transparent
+
+                        if (it.isFocused) {
+                            setFocus(point.x)
+                        }
                     }
                     .focusable()
                     .semantics {

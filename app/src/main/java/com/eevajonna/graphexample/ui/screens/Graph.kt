@@ -29,11 +29,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.eevajonna.graphexample.R
 import com.eevajonna.graphexample.ui.data.ApplicantsData
 import com.eevajonna.graphexample.ui.data.all
 import com.eevajonna.graphexample.ui.data.ict
@@ -61,7 +63,7 @@ fun GraphScreen(modifier: Modifier = Modifier) {
         )
 
         Text(
-            "Percentage of woman applicants in Finnish higher education per year",
+            stringResource(R.string.percentage_of_woman_applicants_in_finnish_higher_education_per_year),
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Start,
             modifier = Modifier
@@ -84,15 +86,15 @@ fun GraphScreen(modifier: Modifier = Modifier) {
             horizontalAlignment = Alignment.Start,
         ) {
             GraphLegend(
-                text = "All applicants in engineering and ICT",
+                text = stringResource(R.string.all_applicants_in_engineering_and_ict),
                 color = graphColors.totalColor,
             )
             GraphLegend(
-                text = "Engineering degrees (Eng.)",
+                text = stringResource(R.string.engineering_degrees_eng),
                 color = graphColors.techColor,
             )
             GraphLegend(
-                text = "Information and Communication Technology (ICT)",
+                text = stringResource(R.string.information_and_communication_technology_ict),
                 color = graphColors.ictColor,
             )
         }
@@ -308,9 +310,9 @@ fun Labels(
             .border(Graph.GraphLabels.borderWidth, MaterialTheme.colorScheme.onBackground),
     ) {
         LabelText(listOf(selectedYear))
-        LabelText(listOf("All:", selectedTotal))
-        LabelText(listOf("Eng.:", selectedTech))
-        LabelText(listOf("ICT:", selectedIct))
+        LabelText(listOf(stringResource(R.string.all), selectedTotal))
+        LabelText(listOf(stringResource(R.string.eng), selectedTech))
+        LabelText(listOf(stringResource(R.string.ict), selectedIct))
     }
 }
 

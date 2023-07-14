@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">GraphExample</string>
+    <string name="information_and_communication_technology_ict">Information and Communication Technology (ICT)</string>
+    <string name="engineering_degrees_eng">Engineering degrees (Eng.)</string>
+    <string name="all_applicants_in_engineering_and_ict">All applicants in engineering and ICT</string>
+    <string name="percentage_of_woman_applicants_in_finnish_higher_education_per_year">Percentage of woman applicants in Finnish higher education per year</string>
+    <string name="all">All:</string>
+    <string name="eng">Eng.:</string>
+    <string name="ict">ICT:</string>
 </resources>

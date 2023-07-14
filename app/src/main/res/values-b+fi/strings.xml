@@ -1,0 +1,9 @@
+<resources>
+    <string name="information_and_communication_technology_ict">Tietojenkäsittely ja tietoliikennetekniikka (ICT)</string>
+    <string name="engineering_degrees_eng">Tekniikan alat</string>
+    <string name="all_applicants_in_engineering_and_ict">Kaikki hakijat allaolevilta aloilta</string>
+    <string name="percentage_of_woman_applicants_in_finnish_higher_education_per_year">Naishakijoiden prosenttimäärät korkeakouluihin vuosittain</string>
+    <string name="all">Kaikki:</string>
+    <string name="eng">Tekn.:</string>
+    <string name="ict">ICT:</string>
+</resources>

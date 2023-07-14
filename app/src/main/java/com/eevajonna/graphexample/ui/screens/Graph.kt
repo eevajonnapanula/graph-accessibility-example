@@ -51,7 +51,7 @@ import kotlinx.coroutines.delay
 fun GraphScreen(modifier: Modifier = Modifier) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(32.dp),
+        verticalArrangement = Arrangement.spacedBy(Graph.innerPadding),
         modifier = modifier,
     ) {
         val graphColors = GraphColors(
@@ -65,31 +65,34 @@ fun GraphScreen(modifier: Modifier = Modifier) {
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Start,
             modifier = Modifier
-                .padding(horizontal = Graph.padding)
-                .padding(top = 16.dp),
+                .padding(Graph.topPadding),
         )
         Graph(
             modifier = Modifier
                 .padding(Graph.padding)
                 .fillMaxWidth()
-                .height(300.dp),
+                .height(Graph.graphHeight),
             total = all,
             tech = tech,
             ict = ict,
             graphColors = graphColors,
         )
 
-        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = Graph.topPadding),
+            verticalArrangement = Arrangement.spacedBy(Graph.topPadding),
+            horizontalAlignment = Alignment.Start,
+        ) {
             GraphLegend(
-                text = "Total",
+                text = "All applicants in engineering and ICT",
                 color = graphColors.totalColor,
             )
             GraphLegend(
-                text = "Tech",
+                text = "Engineering degrees (Eng.)",
                 color = graphColors.techColor,
             )
             GraphLegend(
-                text = "Ict",
+                text = "Information and Communication Technology (ICT)",
                 color = graphColors.ictColor,
             )
         }
@@ -98,13 +101,13 @@ fun GraphScreen(modifier: Modifier = Modifier) {
 
 @Composable
 fun GraphLegend(text: String, color: Color) {
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+    Row(horizontalArrangement = Arrangement.spacedBy(Graph.padding), verticalAlignment = Alignment.CenterVertically) {
         Column(
             modifier = Modifier
-                .size(32.dp)
-                .clip(RoundedCornerShape(4.dp))
+                .size(Graph.GraphLegend.size)
+                .clip(Graph.GraphLegend.shape)
                 .background(color)
-                .border(2.dp, MaterialTheme.colorScheme.onBackground),
+                .border(Graph.GraphLegend.borderWidth, MaterialTheme.colorScheme.onBackground),
         ) {}
         Text(text)
     }
@@ -140,9 +143,9 @@ fun Graph(
 
     Column(
         modifier = modifier
-            .clip(RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(Graph.topPadding))
             .background(MaterialTheme.colorScheme.background)
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = Graph.topPadding)
             .padding(bottom = Graph.padding),
     ) {
         var pixelPointsForTotal by remember { mutableStateOf(emptyList<Point>()) }
@@ -300,14 +303,14 @@ fun Labels(
     Column(
         modifier = modifier
             .wrapContentSize()
-            .padding(bottom = 40.dp, end = 8.dp)
+            .padding(bottom = Graph.GraphLabels.bottomPadding, end = Graph.GraphLabels.endPadding)
             .background(MaterialTheme.colorScheme.background)
-            .border(1.dp, MaterialTheme.colorScheme.onBackground),
+            .border(Graph.GraphLabels.borderWidth, MaterialTheme.colorScheme.onBackground),
     ) {
         LabelText(listOf(selectedYear))
-        LabelText(listOf("Total", selectedTotal))
-        LabelText(listOf("Tech:", selectedTech))
-        LabelText(listOf("Ict:", selectedIct))
+        LabelText(listOf("All:", selectedTotal))
+        LabelText(listOf("Eng.:", selectedTech))
+        LabelText(listOf("ICT:", selectedIct))
     }
 }
 
@@ -315,7 +318,7 @@ fun Labels(
 fun LabelText(texts: List<String>) {
     Row(
         modifier = Modifier
-            .padding(horizontal = 8.dp)
+            .padding(horizontal = Graph.padding)
             .fillMaxWidth(0.35f),
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
@@ -352,5 +355,19 @@ data class GraphColors(
 
 object Graph {
     val padding = 8.dp
+    val topPadding = 16.dp
     val innerPadding = 32.dp
+    val graphHeight = 300.dp
+
+    object GraphLegend {
+        val size = 32.dp
+        val shape = RoundedCornerShape(4.dp)
+        val borderWidth = 2.dp
+    }
+
+    object GraphLabels {
+        val bottomPadding = 40.dp
+        val endPadding = 8.dp
+        val borderWidth = 1.dp
+    }
 }

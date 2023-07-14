@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
 import androidx.compose.ui.Modifier
 import com.eevajonna.graphexample.ui.screens.GraphScreen
 import com.eevajonna.graphexample.ui.theme.GraphExampleTheme
@@ -16,7 +17,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             GraphExampleTheme {
-                Scaffold() {
+                Scaffold(
+                    topBar = {
+                        TopAppBar(title = {})
+                    },
+                ) {
                     GraphScreen(modifier = Modifier.padding(it))
                 }
             }

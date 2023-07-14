@@ -353,6 +353,11 @@ fun Highlighter(
                 isHighlighted = it > (position.first - widthBetweenPoints) && it < (position.second - widthBetweenPoints)
             }
 
+            val contentDesc = "${point.year}: " +
+                "${stringResource(id = R.string.all)} ${point.percentageString}, " +
+                "${stringResource(id = R.string.eng)} ${pixelPointsForTech[index].percentageString}, " +
+                "${stringResource(id = R.string.ict)} ${pixelPointsForIct[index].percentageString}"
+
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -369,9 +374,8 @@ fun Highlighter(
                     }
                     .focusable()
                     .semantics {
-                        contentDescription =
-                            "${point.year}: Total: ${point.percentageString}, Tech: ${pixelPointsForTech[index].percentageString}, Ict: ${pixelPointsForIct[index].percentageString}"
-                    }
+                        contentDescription = contentDesc
+                    },
             ) {
             }
         }

@@ -192,6 +192,9 @@ fun DrawScope.drawData(
     color: Color,
     highlightedItemX: Float?,
     highlighterColor: Color,
+    strokeWidth: Float = 8.dp.toPx(),
+    strokeCap: StrokeCap = StrokeCap.Round,
+    dashed: Boolean = false,
 ) {
     val path = Path()
 
@@ -217,23 +220,23 @@ fun DrawScope.drawData(
     drawPath(
         path,
         color = color,
-        style = Stroke(width = 3f),
+        style = Stroke(width = 3f, pathEffect = if (dashed) PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f) else null),
     )
 
     drawPoints(
         pixelPoints.map { Offset(it.x + 20f, it.y) },
         PointMode.Points,
         color = color,
-        strokeWidth = 8.dp.toPx(),
-        cap = StrokeCap.Round,
+        strokeWidth = strokeWidth,
+        cap = strokeCap,
     )
 
     drawPoints(
         filterHighlighted(pixelPoints, highlightedItemX).map { Offset(it.x + 20f, it.y) },
         PointMode.Points,
         color = highlighterColor,
-        strokeWidth = 8.dp.toPx(),
-        cap = StrokeCap.Square,
+        strokeWidth = strokeWidth,
+        cap = strokeCap,
     )
 }
 

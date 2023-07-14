@@ -93,7 +93,9 @@ fun GraphScreen(modifier: Modifier = Modifier) {
         )
 
         Column(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = Graph.topPadding),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = Graph.topPadding),
             verticalArrangement = Arrangement.spacedBy(Graph.topPadding),
             horizontalAlignment = Alignment.Start,
         ) {

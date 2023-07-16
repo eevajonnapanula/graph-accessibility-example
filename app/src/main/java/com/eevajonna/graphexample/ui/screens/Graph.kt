@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +36,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
@@ -51,6 +54,7 @@ import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.eevajonna.graphexample.R
@@ -292,18 +296,23 @@ fun Graph(
                     color = graphColors.techColor,
                     highlightedItemX = highlightedX,
                     highlighterColor = highlighterColor,
+                    strokeCap = StrokeCap.Round,
                 )
                 drawData(
                     pixelPointsForIct,
                     color = graphColors.ictColor,
                     highlightedItemX = highlightedX,
                     highlighterColor = highlighterColor,
+                    strokeCap = StrokeCap.Square,
+                    dashed = true,
                 )
                 drawData(
                     pixelPointsForTotal,
                     color = graphColors.totalColor,
                     highlightedItemX = highlightedX,
                     highlighterColor = highlighterColor,
+                    strokeCap = StrokeCap.Butt,
+                    strokeWidth = 12.dp.toPx(),
                 )
             }
 

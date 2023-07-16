@@ -4,16 +4,20 @@ import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,11 +35,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.eevajonna.graphexample.R
 import com.eevajonna.graphexample.ui.data.ApplicantsData
@@ -177,6 +187,8 @@ fun Graph(
 
             var dragInProgress by remember { mutableStateOf(false) }
 
+            val widthBetweenPoints = if (pixelPointsForTotal.isNotEmpty()) pixelPointsForTotal[1].x - pixelPointsForTotal[0].x else 0f
+
             LaunchedEffect(dragInProgress) {
                 if (dragInProgress.not()) {
                     delay(1000L)
@@ -289,6 +301,15 @@ fun Graph(
                 )
             }
 
+            Highlighter(
+                modifier = modifier,
+                widthBetweenPoints = widthBetweenPoints,
+                pixelPointsForTotal = pixelPointsForTotal,
+                pixelPointsForTech = pixelPointsForTech,
+                pixelPointsForIct = pixelPointsForIct,
+                highlightedX = highlightedX,
+            )
+
             if (highlightedX != null) {
                 Labels(
                     Modifier.align(
@@ -299,6 +320,63 @@ fun Graph(
                     selectedIct,
                     selectedYear,
                 )
+            }
+        }
+    }
+}
+
+@Composable
+fun Highlighter(
+    modifier: Modifier = Modifier,
+    widthBetweenPoints: Float,
+    pixelPointsForTotal: List<Point>,
+    pixelPointsForTech: List<Point>,
+    pixelPointsForIct: List<Point>,
+    highlightedX: Float?,
+) {
+    Box(
+        modifier
+            .fillMaxSize(),
+    ) {
+        val sectionWidth = with(LocalDensity.current) {
+            widthBetweenPoints.toDp()
+        }
+
+        pixelPointsForTotal.forEachIndexed { index, point ->
+            val xOffset = ((index + 1) * widthBetweenPoints - widthBetweenPoints * 0.66f).toInt()
+            var isHighlighted by remember { mutableStateOf(false) }
+            var position by remember { mutableStateOf(Pair(0f, 0f)) }
+
+            if (highlightedX == null) isHighlighted = false
+
+            highlightedX?.let {
+                isHighlighted = it > (position.first - widthBetweenPoints) && it < (position.second - widthBetweenPoints)
+            }
+
+            val contentDesc = "${point.year}: " +
+                "${stringResource(id = R.string.all)} ${point.percentageString}, " +
+                "${stringResource(id = R.string.eng)} ${pixelPointsForTech[index].percentageString}, " +
+                "${stringResource(id = R.string.ict)} ${pixelPointsForIct[index].percentageString}"
+
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(sectionWidth)
+                    .offset { IntOffset(xOffset, 0) }
+                    .border(
+                        width = Graph.Highlighter.width,
+                        color = if (isHighlighted) MaterialTheme.colorScheme.onBackground else Color.Transparent,
+                        shape = RoundedCornerShape(Graph.Highlighter.borderRadius),
+                    )
+                    .onGloballyPositioned {
+                        position =
+                            Pair(it.positionInParent().x, it.positionInParent().x + it.size.width)
+                    }
+                    .focusable()
+                    .semantics {
+                        contentDescription = contentDesc
+                    },
+            ) {
             }
         }
     }
@@ -330,7 +408,7 @@ fun Labels(
 fun LabelText(texts: List<String>) {
     Row(
         modifier = Modifier
-            .padding(horizontal = Graph.padding)
+            .padding(horizontal = 8.dp)
             .fillMaxWidth(0.35f),
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
@@ -381,5 +459,10 @@ object Graph {
         val bottomPadding = 40.dp
         val endPadding = 8.dp
         val borderWidth = 1.dp
+    }
+
+    object Highlighter {
+        val width = 2.dp
+        val borderRadius = 4.dp
     }
 }

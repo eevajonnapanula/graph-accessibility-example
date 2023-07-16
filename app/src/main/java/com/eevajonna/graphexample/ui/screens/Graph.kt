@@ -33,12 +33,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.ExperimentalTextApi
@@ -66,7 +72,7 @@ fun GraphScreen(modifier: Modifier = Modifier) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(Graph.innerPadding),
-        modifier = modifier.verticalScroll(rememberScrollState()).padding(bottom = Graph.innerPadding),
+        modifier = modifier,
     ) {
         val graphColors = GraphColors(
             totalColor = MaterialTheme.colorScheme.primary,
@@ -308,6 +314,9 @@ fun Graph(
                 pixelPointsForTech = pixelPointsForTech,
                 pixelPointsForIct = pixelPointsForIct,
                 highlightedX = highlightedX,
+                setFocus = { newX ->
+                    highlightedX = newX
+                },
             )
 
             if (highlightedX != null) {
@@ -333,6 +342,7 @@ fun Highlighter(
     pixelPointsForTech: List<Point>,
     pixelPointsForIct: List<Point>,
     highlightedX: Float?,
+    setFocus: (Float) -> Unit,
 ) {
     Box(
         modifier
@@ -346,6 +356,9 @@ fun Highlighter(
             val xOffset = ((index + 1) * widthBetweenPoints - widthBetweenPoints * 0.66f).toInt()
             var isHighlighted by remember { mutableStateOf(false) }
             var position by remember { mutableStateOf(Pair(0f, 0f)) }
+            var color by remember { mutableStateOf(Color.Transparent) }
+
+            val focusedColor = MaterialTheme.colorScheme.onBackground
 
             if (highlightedX == null) isHighlighted = false
 
@@ -365,12 +378,19 @@ fun Highlighter(
                     .offset { IntOffset(xOffset, 0) }
                     .border(
                         width = Graph.Highlighter.width,
-                        color = if (isHighlighted) MaterialTheme.colorScheme.onBackground else Color.Transparent,
+                        color = color,
                         shape = RoundedCornerShape(Graph.Highlighter.borderRadius),
                     )
                     .onGloballyPositioned {
                         position =
                             Pair(it.positionInParent().x, it.positionInParent().x + it.size.width)
+                    }
+                    .onFocusChanged {
+                        color = if (it.isFocused) focusedColor else Color.Transparent
+
+                        if (it.isFocused) {
+                            setFocus(point.x)
+                        }
                     }
                     .focusable()
                     .semantics {
@@ -408,7 +428,7 @@ fun Labels(
 fun LabelText(texts: List<String>) {
     Row(
         modifier = Modifier
-            .padding(horizontal = 8.dp)
+            .padding(horizontal = Graph.padding)
             .fillMaxWidth(0.35f),
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {

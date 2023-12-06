@@ -67,174 +67,186 @@ fun GraphComponent(
     var selectedYear by remember {
         mutableStateOf("")
     }
+
     val highlighterColor = MaterialTheme.colorScheme.onBackground
+    var pixelPointsForTotal by remember { mutableStateOf(emptyList<Point>()) }
+    var pixelPointsForTech by remember { mutableStateOf(emptyList<Point>()) }
+    var pixelPointsForIct by remember { mutableStateOf(emptyList<Point>()) }
 
-    Column(
-        modifier = modifier
-            .clip(RoundedCornerShape(GraphComponent.topPadding))
-            .background(MaterialTheme.colorScheme.background)
-            .padding(horizontal = GraphComponent.topPadding)
-            .padding(bottom = GraphComponent.padding),
-    ) {
-        var pixelPointsForTotal by remember { mutableStateOf(emptyList<Point>()) }
-        var pixelPointsForTech by remember { mutableStateOf(emptyList<Point>()) }
-        var pixelPointsForIct by remember { mutableStateOf(emptyList<Point>()) }
-
-        Box(
-            contentAlignment = Alignment.Center,
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(
+            modifier = modifier
+                .clip(RoundedCornerShape(GraphComponent.topPadding))
+                .background(MaterialTheme.colorScheme.background)
+                .padding(horizontal = GraphComponent.topPadding)
+                .padding(bottom = GraphComponent.padding),
         ) {
-            val minX = total.first().year.toFloat()
-            val maxX = total.last().year.toFloat()
-            val minY = 14f
-            val maxY = total.maxOf { it.percentage }.toFloat() + 5f
+            Box(
+                contentAlignment = Alignment.Center,
+            ) {
+                val minX = total.first().year.toFloat()
+                val maxX = total.last().year.toFloat()
+                val minY = 14f
+                val maxY = total.maxOf { it.percentage }.toFloat() + 5f
 
-            val textMeasurer = rememberTextMeasurer()
-            val onBackgroundColor = MaterialTheme.colorScheme.onBackground
+                val textMeasurer = rememberTextMeasurer()
+                val onBackgroundColor = MaterialTheme.colorScheme.onBackground
 
-            var dragInProgress by remember { mutableStateOf(false) }
+                var dragInProgress by remember { mutableStateOf(false) }
 
-            val widthBetweenPoints = if (pixelPointsForTotal.isNotEmpty()) pixelPointsForTotal[1].x - pixelPointsForTotal[0].x else 0f
+                val widthBetweenPoints =
+                    if (pixelPointsForTotal.isNotEmpty()) pixelPointsForTotal[1].x - pixelPointsForTotal[0].x else 0f
 
-            LaunchedEffect(dragInProgress) {
-                if (dragInProgress.not()) {
-                    delay(1000L)
-                    highlightedX = null
+                LaunchedEffect(dragInProgress) {
+                    if (dragInProgress.not()) {
+                        delay(1000L)
+                        highlightedX = null
+                    }
+                }
+
+                Canvas(
+                    modifier = Modifier
+                        .padding(
+                            bottom = GraphComponent.innerPadding,
+                            start = GraphComponent.innerPadding,
+                            end = GraphComponent.innerPadding / 2,
+                        )
+                        .pointerInput(Unit) {
+                            detectHorizontalDragGestures(
+                                onDragStart = {
+                                    dragInProgress = true
+                                },
+                                onDragCancel = {
+                                    dragInProgress = false
+                                },
+                                onDragEnd = {
+                                    dragInProgress = false
+                                },
+                            ) { change, _ ->
+                                change.consume()
+                                highlightedX = change.position.x
+                            }
+                        }
+                        .fillMaxSize(),
+                ) {
+                    pixelPointsForTotal = applicantsDataToPoint(
+                        total,
+                        minX,
+                        minY,
+                        maxX,
+                        maxY,
+                        size.height,
+                        size.width,
+                    )
+
+                    pixelPointsForTech = applicantsDataToPoint(
+                        tech,
+                        minX,
+                        minY,
+                        maxX,
+                        maxY,
+                        size.height,
+                        size.width,
+                    )
+
+                    pixelPointsForIct = applicantsDataToPoint(
+                        ict,
+                        minX,
+                        minY,
+                        maxX,
+                        maxY,
+                        size.height,
+                        size.width,
+                    )
+
+                    val highlightedTotal = filterHighlighted(pixelPointsForTotal, highlightedX)
+                    val highlightedTech = filterHighlighted(pixelPointsForTech, highlightedX)
+                    val highlightedIct = filterHighlighted(pixelPointsForIct, highlightedX)
+
+                    selectedYear =
+                        if (highlightedTotal.isNotEmpty()) highlightedTotal.first().year.toString() else selectedYear
+
+                    selectedTotal =
+                        if (highlightedTotal.isNotEmpty()) highlightedTotal.first().percentageString else selectedTotal
+                    selectedTech =
+                        if (highlightedTech.isNotEmpty()) highlightedTech.first().percentageString else selectedTech
+                    selectedIct =
+                        if (highlightedIct.isNotEmpty()) highlightedIct.first().percentageString else selectedIct
+
+                    drawYAxis(
+                        textMeasurer = textMeasurer,
+                        min = minY,
+                        max = maxY,
+                        height = size.height,
+                        width = 0f,
+                        onPrimaryColor = onBackgroundColor,
+                    )
+
+                    drawXAxis(
+                        pixelPointsForTotal,
+                        size.width,
+                        size.height,
+                        textMeasurer = textMeasurer,
+                        highlightedItemX = highlightedX,
+                        onPrimaryColor = onBackgroundColor,
+                        highlighterColor = highlighterColor,
+                    )
+
+                    drawData(
+                        pixelPointsForTech,
+                        color = graphColors.techColor,
+                        highlightedItemX = highlightedX,
+                        highlighterColor = highlighterColor,
+                        strokeCap = StrokeCap.Round,
+                    )
+                    drawData(
+                        pixelPointsForIct,
+                        color = graphColors.ictColor,
+                        highlightedItemX = highlightedX,
+                        highlighterColor = highlighterColor,
+                        strokeCap = StrokeCap.Square,
+                        dashed = true,
+                    )
+                    drawData(
+                        pixelPointsForTotal,
+                        color = graphColors.totalColor,
+                        highlightedItemX = highlightedX,
+                        highlighterColor = highlighterColor,
+                        strokeCap = StrokeCap.Butt,
+                        strokeWidth = 12.dp.toPx(),
+                    )
+                }
+
+                Highlighter(
+                    modifier = modifier,
+                    widthBetweenPoints = widthBetweenPoints,
+                    pixelPointsForTotal = pixelPointsForTotal,
+                    pixelPointsForTech = pixelPointsForTech,
+                    pixelPointsForIct = pixelPointsForIct,
+                    highlightedX = highlightedX,
+                    setFocus = { newX ->
+                        highlightedX = newX
+                    },
+                )
+
+                if (highlightedX != null) {
+                    Labels(
+                        Modifier.align(
+                            Alignment.BottomEnd,
+                        ),
+                        selectedTotal,
+                        selectedTech,
+                        selectedIct,
+                        selectedYear,
+                    )
                 }
             }
-
-            Canvas(
-                modifier = Modifier
-                    .padding(
-                        bottom = GraphComponent.innerPadding,
-                        start = GraphComponent.innerPadding,
-                        end = GraphComponent.innerPadding / 2,
-                    )
-                    .pointerInput(Unit) {
-                        detectHorizontalDragGestures(
-                            onDragStart = {
-                                dragInProgress = true
-                            },
-                            onDragCancel = {
-                                dragInProgress = false
-                            },
-                            onDragEnd = {
-                                dragInProgress = false
-                            },
-                        ) { change, _ ->
-                            change.consume()
-                            highlightedX = change.position.x
-                        }
-                    }
-                    .fillMaxSize(),
-            ) {
-                pixelPointsForTotal = applicantsDataToPoint(
-                    total,
-                    minX,
-                    minY,
-                    maxX,
-                    maxY,
-                    size.height,
-                    size.width,
-                )
-
-                pixelPointsForTech = applicantsDataToPoint(
-                    tech,
-                    minX,
-                    minY,
-                    maxX,
-                    maxY,
-                    size.height,
-                    size.width,
-                )
-
-                pixelPointsForIct = applicantsDataToPoint(
-                    ict,
-                    minX,
-                    minY,
-                    maxX,
-                    maxY,
-                    size.height,
-                    size.width,
-                )
-
-                val highlightedTotal = filterHighlighted(pixelPointsForTotal, highlightedX)
-                val highlightedTech = filterHighlighted(pixelPointsForTech, highlightedX)
-                val highlightedIct = filterHighlighted(pixelPointsForIct, highlightedX)
-
-                selectedYear =
-                    if (highlightedTotal.isNotEmpty()) highlightedTotal.first().year.toString() else selectedYear
-
-                selectedTotal = if (highlightedTotal.isNotEmpty()) highlightedTotal.first().percentageString else selectedTotal
-                selectedTech = if (highlightedTech.isNotEmpty()) highlightedTech.first().percentageString else selectedTech
-                selectedIct = if (highlightedIct.isNotEmpty()) highlightedIct.first().percentageString else selectedIct
-
-                drawYAxis(
-                    textMeasurer = textMeasurer,
-                    min = minY,
-                    max = maxY,
-                    height = size.height,
-                    width = 0f,
-                    onPrimaryColor = onBackgroundColor,
-                )
-
-                drawXAxis(
-                    pixelPointsForTotal,
-                    size.width,
-                    size.height,
-                    textMeasurer = textMeasurer,
-                    highlightedItemX = highlightedX,
-                    onPrimaryColor = onBackgroundColor,
-                    highlighterColor = highlighterColor,
-                )
-
-                drawData(
-                    pixelPointsForTech,
-                    color = graphColors.techColor,
-                    highlightedItemX = highlightedX,
-                    highlighterColor = highlighterColor,
-                    strokeCap = StrokeCap.Round,
-                )
-                drawData(
-                    pixelPointsForIct,
-                    color = graphColors.ictColor,
-                    highlightedItemX = highlightedX,
-                    highlighterColor = highlighterColor,
-                    strokeCap = StrokeCap.Square,
-                    dashed = true,
-                )
-                drawData(
-                    pixelPointsForTotal,
-                    color = graphColors.totalColor,
-                    highlightedItemX = highlightedX,
-                    highlighterColor = highlighterColor,
-                    strokeCap = StrokeCap.Butt,
-                    strokeWidth = 12.dp.toPx(),
-                )
-            }
-
-            Highlighter(
-                modifier = modifier,
-                widthBetweenPoints = widthBetweenPoints,
-                pixelPointsForTotal = pixelPointsForTotal,
-                pixelPointsForTech = pixelPointsForTech,
-                pixelPointsForIct = pixelPointsForIct,
-                highlightedX = highlightedX,
-                setFocus = { newX ->
-                    highlightedX = newX
-                },
-            )
-
-            if (highlightedX != null) {
-                Labels(
-                    Modifier.align(
-                        Alignment.BottomEnd,
-                    ),
-                    selectedTotal,
-                    selectedTech,
-                    selectedIct,
-                    selectedYear,
-                )
-            }
+        }
+        ControlButtons(
+            highlightedX = highlightedX,
+            lastIndex = pixelPointsForTotal.count() - 1,
+        ) { selectedIndex ->
+            highlightedX = pixelPointsForTotal[selectedIndex].x
         }
     }
 }
@@ -250,7 +262,10 @@ fun Labels(
     Column(
         modifier = modifier
             .wrapContentSize()
-            .padding(bottom = GraphComponent.GraphLabels.bottomPadding, end = GraphComponent.GraphLabels.endPadding)
+            .padding(
+                bottom = GraphComponent.GraphLabels.bottomPadding,
+                end = GraphComponent.GraphLabels.endPadding,
+            )
             .background(MaterialTheme.colorScheme.background)
             .border(GraphComponent.GraphLabels.borderWidth, MaterialTheme.colorScheme.onBackground),
     ) {

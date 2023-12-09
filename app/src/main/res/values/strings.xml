@@ -8,4 +8,6 @@
     <string name="eng">Eng.:</string>
     <string name="ict">ICT:</string>
     <string name="data_source">Datan source: Finnish Education Statistics / Vipunen</string>
+    <string name="button_next_year">Next year</string>
+    <string name="button_previous_year">Previous year</string>
 </resources>

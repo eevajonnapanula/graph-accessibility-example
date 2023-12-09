@@ -7,4 +7,6 @@
     <string name="eng">Tekn.:</string>
     <string name="ict">ICT:</string>
     <string name="data_source">Datan lähde: Opetushallinnon tilastopalvelu Vipunen</string>
+    <string name="button_next_year">Seuraava vuosi</string>
+    <string name="button_previous_year">Edellinen vuosi</string>
 </resources>

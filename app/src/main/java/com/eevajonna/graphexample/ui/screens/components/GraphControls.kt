@@ -18,9 +18,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.eevajonna.graphexample.R
+import com.eevajonna.graphexample.ui.screens.TestTags
 
 @Composable
 fun ControlButtons(
@@ -45,6 +47,7 @@ fun ControlButtons(
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         ControlButton(
+            modifier = Modifier.testTag(TestTags.leftButtonTestTag),
             type = GraphControlType.Previous,
             currentIndex = selectedIndex,
             lastIndex = lastIndex,
@@ -55,6 +58,7 @@ fun ControlButtons(
             },
         )
         ControlButton(
+            modifier = Modifier.testTag(TestTags.rightButtonTestTag),
             type = GraphControlType.Next,
             currentIndex = selectedIndex,
             lastIndex = lastIndex,
@@ -73,6 +77,7 @@ fun ControlButton(
     currentIndex: Int,
     lastIndex: Int,
     firstFocusIndex: Int,
+    modifier: Modifier = Modifier,
     highlightedX: Float?,
     setFocus: (Int) -> Unit,
 ) {
@@ -81,14 +86,17 @@ fun ControlButton(
         GraphControlType.Previous -> ::getPreviousIndex
     }
 
-    OutlinedButton(onClick = {
-        val newSelectedIndex = when (highlightedX) {
-            null -> firstFocusIndex
-            else -> nextIndexFunc(currentIndex, lastIndex)
-        }
+    OutlinedButton(
+        modifier = modifier,
+        onClick = {
+            val newSelectedIndex = when (highlightedX) {
+                null -> firstFocusIndex
+                else -> nextIndexFunc(currentIndex, lastIndex)
+            }
 
-        setFocus(newSelectedIndex)
-    }) {
+            setFocus(newSelectedIndex)
+        },
+    ) {
         if (type == GraphControlType.Previous) ControlButtonIcon(icon = type.icon)
         Text(stringResource(id = type.textResId))
         if (type == GraphControlType.Next) ControlButtonIcon(icon = type.icon)

@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.eevajonna.graphexample.R
 import com.eevajonna.graphexample.ui.data.ApplicantsData
 import com.eevajonna.graphexample.ui.screens.GraphColors
+import com.eevajonna.graphexample.ui.screens.TestTags
 import com.eevajonna.graphexample.ui.screens.utils.Point
 import com.eevajonna.graphexample.ui.screens.utils.applicantsDataToPoint
 import com.eevajonna.graphexample.ui.screens.utils.drawData
@@ -127,7 +129,8 @@ fun GraphComponent(
                                 highlightedX = change.position.x
                             }
                         }
-                        .fillMaxSize(),
+                        .fillMaxSize()
+                        .testTag(TestTags.chartTestTag),
                 ) {
                     pixelPointsForTotal = applicantsDataToPoint(
                         total,
@@ -267,7 +270,8 @@ fun Labels(
                 end = GraphComponent.GraphLabels.endPadding,
             )
             .background(MaterialTheme.colorScheme.background)
-            .border(GraphComponent.GraphLabels.borderWidth, MaterialTheme.colorScheme.onBackground),
+            .border(GraphComponent.GraphLabels.borderWidth, MaterialTheme.colorScheme.onBackground)
+            .testTag(TestTags.labelsTestTag),
     ) {
         LabelText(listOf(selectedYear))
         LabelText(listOf(stringResource(R.string.all), selectedTotal))
